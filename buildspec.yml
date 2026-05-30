@@ -1,0 +1,38 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: ap-south-2
+    AWS_ACCOUNT_ID: "618015514579"
+    ECR_REPOSITORY_NAME: kapilan_manual_php_ecr
+    IMAGE_TAG: latest
+    ECS_CONTAINER_NAME: cont1
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - echo Repository URI is $REPOSITORY_URI
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building Docker image...
+      - docker build -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .
+      - docker tag $ECR_REPOSITORY_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing Docker image to ECR...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing imagedefinitions.json...
+      - printf '[{"name":"%s","imageUri":"%s"}]' $ECS_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
