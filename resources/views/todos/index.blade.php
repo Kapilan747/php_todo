@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laravel PHP Todo App</title>
+    <title>Todo App-Kapilan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
