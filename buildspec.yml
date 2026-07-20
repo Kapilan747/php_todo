@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     AWS_REGION: ap-south-2
-    AWS_ACCOUNT_ID: "618015514579"
+    AWS_ACCOUNT_ID: "824756206534"
     ECR_REPOSITORY_NAME: kapilan_manual_php_ecr
     IMAGE_TAG: latest
     ECS_CONTAINER_NAME: cont1
@@ -14,6 +14,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
+      - aws sts get-caller-identity
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
       - echo Repository URI is $REPOSITORY_URI
 
