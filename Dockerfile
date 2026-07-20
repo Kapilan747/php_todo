@@ -23,6 +23,12 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
+RUN wget -q https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazoncloudwatch-agent.deb \
+ && dpkg -i amazoncloudwatch-agent.deb \
+ && rm amazoncloudwatch-agent.deb
+
+COPY cloudwatch-agent-config.json /opt/aws/amazoncloudwatch-agent/etc/amazon-cloudwatch-agent.json
+
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
